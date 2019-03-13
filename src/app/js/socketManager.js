@@ -2,7 +2,7 @@ import { store } from './index'
 
 import io from 'socket.io-client'
 
-const storedConnections = {}
+const storedConnections = {};
 
 /**
  * Returns current store state
@@ -11,9 +11,9 @@ const storedConnections = {}
  * @return {Object} store state
  */
 function getState () {
-    let result = {}
+    let result = {};
     if ( store )
-        result = store.getState()
+        result = store.getState();
     return result
 }
 
@@ -25,9 +25,12 @@ function getState () {
 function createNewConnection (id) {
     storedConnections[id] = {
         url: '',
+        namespace:'',
+        path: '',
+        token: '',
         socket: null,
         events: []
-    }
+    };
 
     tryToSubscribeOrRetry(id)
 }
@@ -48,10 +51,10 @@ function tryToSubscribeOrRetry (id) {
 
 function removeConnection (id) {
 
-    const connection = storedConnections[id]
+    const connection = storedConnections[id];
 
     if ( connection.socket )
-        connection.socket.disconnect()
+        connection.socket.disconnect();
 
     if ( connection.unsubscribe )
         connection.unsubscribe()
@@ -69,20 +72,25 @@ export { createNewConnection, removeConnection }
  * - Updates socket url
  */
 function listenForChanges () {
-    const state = getState()
-    const id = this
-    const storedConnection = storedConnections[id]
-    const connection = state.connections.list[state.connections.connections[id].index]
+    const state = getState();
+    const id = this;
+    const storedConnection = storedConnections[id];
+    const connection = state.connections.list[state.connections.connections[id].index];
 
-    const url = connection.url
-    let namespace = connection.namespace || ''
+    const url = connection.url;
+    const token = connection.token;
+    const path = connection.path;
+    let namespace = connection.namespace || '';
 
     if ( url !== storedConnections[id].url || namespace !== storedConnections[id].namespace) {
+        storedConnections[id].url = url;
+        storedConnections[id].namespace = namespace;
+        storedConnections[id].opt = {};
+        storedConnections[id].opt.query = {};
+        storedConnections[id].opt.query.token = connection.token;
+        storedConnections[id].opt.path = connection.path;
 
-        storedConnections[id].url = url
-        storedConnections[id].namespace = namespace
-
-        let socket = storedConnection.socket
+        let socket = storedConnection.socket;
 
         if ( socket /*&& socket.connected*/ ) { // this means the url was changed, previous connection gets removed and a new one is made
             socket.disconnect()
@@ -91,18 +99,23 @@ function listenForChanges () {
 
         if ( url ) {
             const parsedURL = new URL(url);
-            const path = parsedURL.pathname === '/' ? '/socket.io' : parsedURL.pathname
-            socket = io(parsedURL.origin + namespace, {path});
-            storedConnections[id].socket = socket
+            socket = io(url + namespace, {
+                path: path,
+                query : { token: token }
+            });
+            storedConnections[id].socket = socket;
 
             socket.on('connect', function () {
-                store.dispatch({type: 'REMOVE_ALL_MESSAGES'})
-                store.dispatch({type: 'REMOVE_ALL_SENTMESSAGES'})
+                console.log("connected");
+                store.dispatch({type: 'REMOVE_ALL_MESSAGES'});
+                store.dispatch({type: 'REMOVE_ALL_SENTMESSAGES'});
                 store.dispatch({type: 'SET_CONNECTED', id})
-            })
+            });
+
             socket.on('disconnect', function () {
                 store.dispatch({type: 'SET_DISCONNECTED', id})
-            })
+            });
+            socket.connect();
 
         }
     }

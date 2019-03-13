@@ -1,10 +1,11 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var options = {
-	path: '/socket.io', // this is the default path but can be changed to anything
-}
-var io = require('socket.io')(http, options);
-const path = require('path')
+const app = require('express')();
+const http = require('http').Server(app);
+let options = {
+	query : {token: "b32f9a44-151b-46ed-8cba-1eaeb58360df"},
+	path: '/socket',// this is the default path but can be changed to anything
+};
+const io = require('socket.io')(http, options);
+const path = require('path');
 
 app.get('/', function(req, res){
 	res.sendFile(path.join(__dirname, 'index.html'));
@@ -23,7 +24,7 @@ io.on('connection', function(socket){
 	socket.on('a', function () {
 		console.log('all message arguments:', ...[].slice.call(arguments))
 		console.log('types', [].map.call(arguments, arg => getTypeOf(arg)))
-	})
+	});
 	socket.on('chat message', function(){
 		console.log('message:', ...[].slice.call(arguments));
 		io.emit('chat message', ...[].slice.call(arguments));
@@ -67,7 +68,7 @@ function startIntervals () {
 	}, 80);
 }
 
-var nsp = io.of('/asd');
+var nsp = io.of('/user');
 nsp.on('connection', function(socket){
 	console.log('someone connected on /asd');
 	socket.on('chat message', function(msg){

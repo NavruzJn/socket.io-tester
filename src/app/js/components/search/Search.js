@@ -15,18 +15,20 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
     return {
-        setNamespaceAndUrl (id, namespace, url) {
+        setNamespaceAndUrl (id, namespace, url, path, token) {
             dispatch({
                 type: 'SET_NAMESPACE_AND_URL',
                 id,
                 namespace,
+                path,
+                token,
                 url: makeSureItsGotHttp(url)
             })
         }
     }
 }
 
-const Search = connect(mapStateToProps, mapDispatchToProps)(SearchView)
+const Search = connect(mapStateToProps, mapDispatchToProps)(SearchView);
 
 export default Search
 
@@ -38,13 +40,13 @@ export default Search
  * @return {String}     validated url
  */
 function makeSureItsGotHttp (url) {
-    const lowerCaseUrl = url.toLowerCase()
-    const hasHttp = lowerCaseUrl.indexOf("http://") === 0
-    const hasHttps = lowerCaseUrl.indexOf("https://") === 0
-    let result
+    const lowerCaseUrl = url.toLowerCase();
+    const hasHttp = lowerCaseUrl.indexOf("http://") === 0;
+    const hasHttps = lowerCaseUrl.indexOf("https://") === 0;
+    let result;
     if ( !hasHttps && !hasHttp )
-        result = `http://${url}`
+        result = `http://${url}`;
     else
-        result = url
+        result = url;
     return result
 }

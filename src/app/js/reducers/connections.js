@@ -47,18 +47,18 @@ export default function connections (state = defaultState, action) {
  * Adds connection object to the store (this is where the information on a socket.io connection is kept)
  */
 function addConnection (state, action) {
-    const connections = {...state.connections}
+    const connections = {...state.connections};
 
-    const id = action.id
+    const id = action.id;
 
     const newConnection = {
         index: state.list.length,
         id
     }
 
-    connections[id] = newConnection
+    connections[id] = newConnection;
 
-    const list = state.list.slice()
+    const list = state.list.slice();
 
     list.push({
         url: '',
@@ -67,7 +67,7 @@ function addConnection (state, action) {
         connected: false,
         events: [],
         order: list.length + 1
-    })
+    });
 
     return {
         connections,
@@ -79,9 +79,9 @@ function addConnection (state, action) {
  * Removes a connection from the list
  */
 function removeConnection (state, action) {
-    const connection = state.connections[action.id]
+    const connection = state.connections[action.id];
 
-    const list = state.list.slice()
+    const list = state.list.slice();
     list[connection.index].disabled = true
 
     return {
@@ -94,19 +94,20 @@ function removeConnection (state, action) {
  * Updates the url of a connection
  */
 function setNamespaceAndUrl (state, action) {
-    const list = state.list.slice()
-    const id = action.id
+    const list = state.list.slice();
+    const id = action.id;
 
     // set namespace
     if(action.namespace) {
-        const namespaceWithLeadingSlash = action.namespace.charAt(0) === '/' ? action.namespace : '/' + action.namespace
-        list[state.connections[id].index].namespace = namespaceWithLeadingSlash
+        list[state.connections[id].index].namespace = action.namespace.charAt(0) === '/' ? action.namespace : '/' + action.namespace
     } else {
         list[state.connections[id].index].namespace = ''
     }
 
     // set URL
-    list[state.connections[id].index].url = action.url
+    list[state.connections[id].index].url = action.url;
+    list[state.connections[id].index].path = action.path;
+    list[state.connections[id].index].token = action.token;
 
     return {
         connections: state.connections,
@@ -118,9 +119,9 @@ function setNamespaceAndUrl (state, action) {
  * Updates a connection 'connected' status to newValue
  */
 function setConnected (state, action, newValue) {
-    const list = state.list.slice()
+    const list = state.list.slice();
 
-    const id = action.id
+    const id = action.id;
 
     list[state.connections[id].index].connected = newValue
 

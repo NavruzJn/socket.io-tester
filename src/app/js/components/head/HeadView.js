@@ -101,9 +101,9 @@ class Head extends Component {
      * Add a new connection to the store, also creates a new tab and sets it as the active tab
      */
     addConnection () {
-        const newId = new Date().getTime()
-        createNewConnection(newId)
-        this.props.addConnection(newId)
+        const newId = new Date().getTime();
+        createNewConnection(newId);
+        this.props.addConnection(newId);
         this.props.setActiveTab(newId)
     }
 
@@ -191,10 +191,10 @@ class Head extends Component {
     }
 
     render () {
-        const tabs = this.props.connections.list.filter(c => !c.disabled)
-        let activeTab = this.props.activeTab
+        const tabs = this.props.connections.list.filter(c => !c.disabled);
+        let activeTab = this.props.activeTab;
         if ( activeTab === -1 && tabs.length )
-            activeTab = tabs.slice(-1)[0].id
+            activeTab = tabs.slice(-1)[0].id;
         return (
             <div className="header">
                 {tabs.map((tab, i) =>

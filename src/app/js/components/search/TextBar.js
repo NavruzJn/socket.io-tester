@@ -23,7 +23,7 @@ const TextBar = ({url, originalUrl, changeUrl, setNamespaceAndUrl, connected}) =
         <form className="search-text-form" onSubmit={setNamespaceAndUrl}>
             <input onChange={changeUrl} className="search-text-input" type="text" value={url} placeholder="http://www.example.com/socket.io" />
         </form>
-    </span>
+    </span>;
 
 /**
  * Get the appropriate icon to display based on connection status
@@ -34,7 +34,7 @@ const TextBar = ({url, originalUrl, changeUrl, setNamespaceAndUrl, connected}) =
  * @return {Object} react component
  */
 function getIcon (url, connected) {
-    let result
+    let result;
     const customStyle = {transform: 'rotate(45deg)', transformOrigin: 'bottom', left: -7, position: 'relative'}
     if ( connected )
         result = <ConnectionIcon size={20} color={'green'} customStyle={customStyle} />
