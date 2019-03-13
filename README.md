@@ -39,6 +39,11 @@ or
 
 ### namespace
 * /asd
+### path
+* /socket
+* /socket.io by default
+### token
+* adskfblsakjvaskl
 #### events in namespace
 * test: sends messages at specific interval
 
